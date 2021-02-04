@@ -11,21 +11,7 @@ System.out.println(a + b + "");  //输出30
 
 因为直接将字符串和数字一起运算时，数字被当成了字符串；而输出的时候，计算是从左到右的，所以先运行了a + b。
 
-## 二、快捷输入
-
-输入psvm来生成
-
-```java
-public static void main(String[] args) {}
-```
-
-输入sout来生成
-
-```java
-System.out.println()
-```
-
-## 三、常见的DOS命令
+## 二、常见的DOS命令
 
 ### 盘符切换
 
@@ -66,7 +52,7 @@ cd> a.txt  # 新建文件
 del a.txt  # 删除文件
 ```
 
-## 四、数据类型
+## 三、数据类型
 
 ### 不同的进制
 
