@@ -1,0 +1,46 @@
+# 杂七杂八
+
+## static 关键字
+
+- 静态的成员可以被直接按照类名调用，而非静态的成员必须要有实例才能被调用
+- 因为静态的成员和类一起加载，非静态的成员只有在生成对象的时候才会分配空间
+
+```java
+public class Student{
+	private static int age;  // 静态的变量
+	private static void test(){
+        System.out.println("test");
+    }
+    public static void main(String[] args){
+        Student.age = 5;
+        System.out.println(Student.age);  // 输出为5   静态变量可以直接调用、赋值
+        test();  // 静态的方法也可以被直接调用
+    }
+}
+```
+
+## 代码块
+
+- 匿名代码块在实例化对象的时候自动加载（在构造方法之前加载）
+- 静态代码块和类一起加载
+
+```java
+public class Test{
+	{
+		System.out.println("匿名代码块");
+	}
+	static {
+		System.out.println("静态代码块");
+	}
+    
+    public Test{
+        System.out.println("构造方法");
+    }
+    
+    public static void main(String[] args) {
+    	// 无代码直接运行 Test 类，会输出 静态代码块
+        new Person();  // 依次输出 静态代码块 匿名代码块 构造方法  
+    }
+}
+```
+
