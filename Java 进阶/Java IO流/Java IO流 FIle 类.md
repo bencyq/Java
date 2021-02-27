@@ -56,3 +56,22 @@ File f1 = new File("D:\\test");
 File f1 = new File("D:\\","a.txt");
 ```
 
+### File(File parent, String child)
+
+根据 parent 抽象路径名和 child 路径名字符串创建一个新的 File 实例
+
+参数:
+
+- 把路径分成了父路径和子路径两部分，都可以单独书写，使用起来非常灵活
+- 父路径是 File 类型，可以使用 File 类的方法对路径进行操作
+
+```java
+File parent =new File("D:\\");
+File f1 = new File(parent, "a.txt");
+```
+
+## 常用方法
+
+### 获取功能的方法
+
+- `public String getAbsolutepath()`：返回此 File 的绝对路径
