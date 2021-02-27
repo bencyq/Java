@@ -74,4 +74,17 @@ File f1 = new File(parent, "a.txt");
 
 ### 获取功能的方法
 
-- `public String getAbsolutepath()`：返回此 File 的绝对路径
+- `public String getAbsolutepath()`：返回此 File 的**绝对路径**
+
+- `public string getPath()`：将此 File 对象转换为路径名**字符串**，绝对路径则返回绝对路径，相对路径则返回相对路径
+
+- `public String getName()`：返回由此 File 对象表示的文件或者目录的名字，获取的是**路径的结尾**，即文件或者文件夹
+
+- `public long length()`：返回由此 File 对象表示的文件的**大小**，以字节为单位的，返回值为 **Long**；如果路径不存在或者路径是文件夹，那么返回**0**
+
+- ```java
+  File f1 = File("D:\\a.txt");
+  System.out.println(f1.toString());  // toString() 方法调用的是 File 类的 getPath() 方法 
+  ```
+
+- 
