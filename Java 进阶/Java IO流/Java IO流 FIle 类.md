@@ -117,7 +117,7 @@ for (String string : arr) {
 	System.out.println(string);  // 打印的是目录和文件的名称
 }
 
-File[] files=f1.listFiles();
+File[] files = f1.listFiles();
 for (File file : files) {
     System.out.println(file);  // 打印的是目录和文件的整个绝对路径
 }
@@ -147,9 +147,11 @@ public class IOTest {
 }
 ```
 
-## 实践
+## 综合案例
 
-### 查找以 **.md** 为结尾的文件
+### 文件搜索
+
+查找以 **.md** 结尾的文件
 
 ```java
 public class IOTest {
@@ -176,5 +178,136 @@ public class IOTest {
         }
     }
 }
+```
+
+### 文件过滤器（FileFilter）
+
+#### `java.io.FileFilter`接口
+
+- `java.io.FileFilter`是一个接口，是 File 的用于抽象路径名的过滤器
+- 在 File 类中有两个和 [listFiles](# 目录的遍历) 重载的方法，方法参数传递的就是过滤器
+
+##### 作用
+
+用来过滤文件（File 对象）
+
+##### 抽象方法
+
+`boolean accept(File pathname)`：用来过滤文件的方法；
+
+​		参数： File pathname 就是使用 [listFiles](# 目录的遍历) 方法遍历目录，得到的每一个文件对象
+
+#### `java.io.FilenameFilter`接口
+
+##### 作用
+
+用于过滤文件名称
+
+##### 抽象方法
+
+`boolean accept(File dir, String name)`：用来过滤文件名称的方法
+
+​		参数：File dir 是构造方法中传递的被遍历的目录；
+
+​				   String name 是使用 ListFiles 方法遍历目录，获得的文件/文件夹的名称
+
+#### 注意
+
+两个过滤器是没有实现类的，必须我们自己**重写实现类**，重写过滤方法 accept
+
+#### 过滤器的原理
+
+```java
+File[] files = dir.listFiles(new FileFilterImpl());
+```
+
+`FileFilter`中的方法 accept 是由 `listFiles`调用的
+
+`listFiles`一共做了三件事
+
+1. 查找该路径下的每一个目录和文件 --> 封装为 File 对象
+2. 调用参数传递的过滤器中的方法 accept
+3. 把封装后的 File 对象，传递到 accept 方法中
+
+```java
+public class FileFilterImpl implements FileFilter {
+    public boolean accept(File pathname) {
+        /*
+        过滤的规则
+        */
+        return true;
+    }
+}
+```
+
+#### 实例
+
+- 正常写法
+
+```java
+// 过滤器的实现类
+public class FileFilterImpl implements FileFilter {
+    public boolean accept(File pathname) {
+        // 如果 pathname 是目录，则继续遍历，且返回 true
+        if (pathname.isDirectory())
+            return true;
+        return pathname.getAbsolutePath().toLowerCase().endsWith(".md");
+    }
+}
+
+// 执行文件
+public class IOTest {
+    static int count = 0;
+
+    public static void main(String[] args) {
+        File file = new File("C:\\document\\github本地仓库");
+        getAllFile(file);
+        System.out.println("一共有 " + count + " 个笔记");
+    }
+
+    public static void getAllFile(File dir) {
+        File[] files = dir.listFiles(new FileFilterImpl()); // 传递过滤器对象
+        for (File file : files) {
+            if (file.isDirectory()) {
+                getAllFile(file); // 递归
+            } else {
+                System.out.println(file);
+                count++;
+            }
+        }
+    }
+}
+```
+
+- **匿名内部类写法**
+
+```java
+public class IOTest {
+    static int count = 0;
+
+    public static void main(String[] args) {
+        File file = new File("C:\\document\\github本地仓库");
+        getAllFile(file);
+        System.out.println("一共有 " + count + " 个笔记");
+    }
+
+    public static void getAllFile(File dir) {
+        // 采用匿名内部来，在 new 的时候直接重写方法
+        File[] files = dir.listFiles(new FileFilter() {
+            public boolean accept(File pathname) {
+                return pathname.isDirectory() || pathname.getName().endsWith(".md");
+            }
+        });
+        for (File file : files) {
+            if (file.isDirectory()) {
+                getAllFile(file); // 递归
+            } else {
+                System.out.println(file);
+                count++;
+            }
+        }
+    }
+}
+
 ```
 
