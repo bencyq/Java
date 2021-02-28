@@ -123,3 +123,58 @@ for (File file : files) {
 }
 ```
 
+### 递归打印多级目录
+
+```java
+public class IOTest {
+    public static void main(String[] args) {
+        File file = new File("C:\\document\\github本地仓库");
+        getAllFile(file);
+    }
+
+    public static void getAllFile(File dir) {
+        System.out.println(dir);
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if(file.isDirectory()){
+                getAllFile(file);  // 递归
+            }
+            else{
+                System.out.println(file);
+            }
+        }
+    }
+}
+```
+
+## 实践
+
+### 查找以 **.md** 为结尾的文件
+
+```java
+public class IOTest {
+    public static void main(String[] args) {
+        File file = new File("C:\\document\\github本地仓库");
+        getAllFile(file);
+    }
+
+    public static void getAllFile(File dir) {
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                getAllFile(file); // 递归
+            } else {
+                String str = file.getAbsolutePath(); // 获得字符串形式的路径
+                str = str.toLowerCase(); // 将路径全部小i写
+                boolean b = str.endsWith(".md"); // 判断字符串末尾是否为 .md
+                if (b)
+                    System.out.println(file);
+                // 或者直接
+                // if (file.getName().toLowerCase().endsWith(".md"))
+                //		System.out.println(file);
+            }
+        }
+    }
+}
+```
+
