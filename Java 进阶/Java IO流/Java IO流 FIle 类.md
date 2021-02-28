@@ -184,8 +184,8 @@ public class IOTest {
 
 #### `java.io.FileFilter`接口
 
-- `java.io.FileFilter`是一个接口，是 File 的用于抽象路径名的过滤器
-- 在 File 类中有两个和 [listFiles](# 目录的遍历) 重载的方法，方法参数传递的就是过滤器
+- `java.io.FileFilter`是一个接口，用来过滤**文件名**
+- [listFiles](# 目录的遍历) 方法参数传递的就是过滤器对象（new FileFilter)
 
 ##### 作用
 
@@ -201,7 +201,7 @@ public class IOTest {
 
 ##### 作用
 
-用于过滤文件名称
+用于过滤文件名称，和 FileFilter 接口的区别是，FilenameFilter 可以过滤**文件名和文件夹名**
 
 ##### 抽象方法
 
@@ -241,6 +241,8 @@ public class FileFilterImpl implements FileFilter {
 ```
 
 #### 实例
+
+##### FileFilter
 
 - 正常写法
 
@@ -308,6 +310,37 @@ public class IOTest {
         }
     }
 }
+```
 
+##### FilenameFilter
+
+- 匿名内部类写法
+
+```java
+public class IOTest {
+    static int count = 0;
+
+    public static void main(String[] args) {
+        File file = new File("C:\\document\\github本地仓库");
+        getAllFile(file);
+        System.out.println("一共有 " + count + " 个笔记");
+    }
+
+    public static void getAllFile(File dir) {
+        File[] files = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir,String name) {  // 匿名重写 accept 方法
+                return new File(dir,name).isDirectory()||name.endsWith(".md");
+            }
+        });
+        for (File file : files) {
+            if (file.isDirectory()) {
+                getAllFile(file); // 递归
+            } else {
+                System.out.println(file);
+                count++;
+            }
+        }
+    }
+}
 ```
 
