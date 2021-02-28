@@ -87,4 +87,39 @@ File f1 = new File(parent, "a.txt");
   System.out.println(f1.toString());  // toString() 方法调用的是 File 类的 getPath() 方法 
   ```
 
-- 
+
+### 判断功能的方法
+
+- `public boolean exists()`：判断此 File 对象表示的文件或者目录是否存在
+- `public boolean isDirectoy()`：判断是否为目录
+- `public boolean isFile()`：判断是否为文件
+
+### 创建和删除功能的方法
+
+- `public boolean createNewFile()`：当且仅当具有该名称的文件不存在的时候，创建一个新的空文件（会抛出异常 IOException，得捕获或者继续抛出）
+- `public boolean delete()`：删除此文件或者目录
+- `public boolean mkdir()`：创建该目录（只能创建**单级文件夹**，不能创建多级文件夹）
+- `public boolean mkdirs()`：创建该目录，包括任何必需但是不存在的父目录（可以创建**多级文件夹**）
+
+## 目录的遍历
+
+- `public String[] list()`：返回一个 String 数组，表示该 File 目录中的所有子文件或者目录
+- `public File[] listFiles()`：返回一个 File 数组，表示该 File 目录中的所有子文件或者目录
+
+如果该目录不存在或者不是一个目录，会抛出空指针异常
+
+能获取隐藏的文件和目录
+
+```java
+File f1 = new File("C:\\document\\github本地仓库");
+String[] arr = f1.list();
+for (String string : arr) {
+	System.out.println(string);  // 打印的是目录和文件的名称
+}
+
+File[] files=f1.listFiles();
+for (File file : files) {
+    System.out.println(file);  // 打印的是目录和文件的整个绝对路径
+}
+```
+
