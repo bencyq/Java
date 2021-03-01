@@ -12,15 +12,46 @@
 4. SequenceInputStream 可以认为是一个工具类，将两个或者多个输入流当成一个输入流依次读取。完全可以从IO 包中去除，还完全不影响IO 包的结构，却让其更“纯洁”――纯洁的Decorator 模式。
 5. PrintStream 也可以认为是一个辅助工具。主要可以向其他输出流，或者FileInputStream 写入数据，本身内部实现还是带缓冲的。本质上是对其它流的综合运用的一个工具而已。一样可以踢出IO 包！System.out 和System.out 就是PrintStream 的实例。
 
+
+
 ## 字节输入流 InputStream
 
 从IO中输入字节流的继承图中可以看出。
 
 1. InputStream是所有数据字节流的父类，它是一个抽象类。
-
 2. ByteArrayInputStream、StringBufferInputStream、FileInputStream是三种基本的介质流，它们分别从Byte数组、StringBuffer、和本地文件中读取数据，PipedInputStream是从与其他线程共用的管道中读取数据。
-
 3. ObjectInputStream 和所有 FileInputStream 的子类都是装饰流（装饰器模式的主角）。
+### 共有方法
+
+`public int read()`：读取一个字节并返回；读取到文件的末尾返回-1
+
+`public int read(byte[] b)`：读取字节数组给b，返回读取的字节的个数；读取到文件的末尾返回-1
+
+`public void close()` ：关闭流
+
+### 文件字节输入流 FileInputStream
+
+#### 构造方法
+
+`public FileInputStream(String name)`
+
+`public FileInputStream(File file)`
+
+#### 方法
+
+`public int read`：如同共有方法
+
+p.s. 我们可以用 String 类的构造方法 `public String(byte[] byte)`来将读入的字节直接转化为字符串，例如
+
+```java
+FileInputStream fis = new FileInputStream("a.txt");
+byte[] b = new byte[2];
+fis.read(b);
+System.out.println(new String(b));  // 这里打印的直接就是 txt 文件里的字符串
+fis.close();
+```
+
+
 
 ## 字节输出流 OutputStream
 
@@ -78,3 +109,67 @@ public static void main(String[] args)throws IOException{  // FileOutputStream �
 
 #### 数据的追加续写
 
+##### 构造方法
+
+`FileOutputStream(String name, boolean append)`
+
+`FileOutputStream(File file, boolean append)`
+
+当 append 为 true 时，继续在文件尾追加数据；当 append 为 false 时，创建一个新文件覆盖源文件
+
+#### 换行
+
+​	符号：
+
+​		`windows:\r\n`			`linux:/n`			`mac:/r`
+
+
+
+## 练习：文件的复制
+
+### 一个字节读取与写入
+
+```java
+public static void copyDirectly() throws IOException {
+        long s = System.currentTimeMillis();
+        FileInputStream fis = new FileInputStream(
+                "C:\\document\\github本地仓库\\java\\Java 进阶\\picture\\1010726-20170621004734695-988542448.png");
+        FileOutputStream fos = new FileOutputStream("text1.png");
+        int len; // 记录了所读取的字节
+        while ((len = fis.read()) != -1) {
+            fos.write(len);
+        }
+        fis.close();
+        fos.close();
+        long e = System.currentTimeMillis();
+        System.out.println("直接复制文件共耗时" + (e - s) + "毫秒");
+    	// 耗时 1302 毫秒
+}
+```
+
+### 使用数组缓冲读取（**速度更快**）
+
+```java
+public static void copyWithByte() throws IOException {
+        long s = System.currentTimeMillis();
+        FileInputStream fis = new FileInputStream(
+                "C:\\document\\github本地仓库\\java\\Java 进阶\\picture\\1010726-20170621004734695-988542448.png");
+        FileOutputStream fos = new FileOutputStream("text2.png");
+        byte[] b = new byte[10240];
+        int len; // 记录每次读取的有效字节的个数
+        while ((len = fis.read(b)) != -1) {
+            fos.write(b, 0, len);
+        }
+        fis.close();
+        fos.close();
+        long e = System.currentTimeMillis();
+        System.out.println("缓冲数组复制文件共耗时" + (e - s) + "毫秒");
+    	// 仅耗时 2 毫秒
+}
+```
+
+## 字节流读取中文字符的问题
+
+- 使用字节流读取中文字符时，可能不会显示完整的字符，因为一个中文字符可能占用多个字节存储
+- 比如，GBK 编码一个中文字符占 2 个字节；UTF-8 编码一个中文字符占 3 个字节
+- 所以 Java 提供字节流，专门用于处理文本文件
