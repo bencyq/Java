@@ -107,7 +107,7 @@ public static void main(String[] args)throws IOException{  // FileOutputStream �
 }  
 ```
 
-#### 数据的追加续写
+#### 数据的追加续写与换行
 
 ##### 构造方法
 
