@@ -24,9 +24,8 @@
 
 `FileReader(File file)`
 
-#### 实例
 
-- 单字符读取
+#### 单字符读取
 
 ```java
 public static void main(String[] args)throws IOException {
@@ -41,7 +40,7 @@ public static void main(String[] args)throws IOException {
 }
 ```
 
-- 字符数组缓冲读取
+#### 字符数组缓冲读取
 
 ```java
 public static void main(String[] args) throws IOException {
