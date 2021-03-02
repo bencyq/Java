@@ -1,2 +1,2 @@
-# java
-java自学笔记
+# Java
+Java自学笔记
