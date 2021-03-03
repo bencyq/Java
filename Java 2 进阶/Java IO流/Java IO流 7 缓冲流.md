@@ -17,7 +17,7 @@
 2. 创建 BufferedOutputStream 对象，构造方法中传递 FileOutputStream 对象
 3. 使用方法 write，将数据写入到内部缓冲区中
 4. 使用方法 flush，将内部缓存区中的数据刷新到硬盘中
-5. 释放资源
+5. 释放资源（**关闭缓冲流的时候会自动关闭字节流/字符流**）
 
 ### 字节缓冲输出流 BufferedOutputStream
 
@@ -39,6 +39,31 @@ public static void main(String[] args) {
                 bos.write("我把数据写入到内部缓冲区中".getBytes());
                 bos.flush();
                 bos.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+### 字节缓冲输入流 BufferedInputStream
+
+`java.io.BufferedInputStream extends InputStream`
+
+#### 构造方法
+
+- `BufferedInputStream(InputStream out)`
+- `BufferedInputStream(InputStream out, int size)`：第二个参数指定了缓冲区的大小
+
+#### 实例
+
+```java
+public static void main(String[] args) {
+    try (FileInputStream fis = new FileInputStream("src\\a.txt");
+            BufferedInputStream bis = new BufferedInputStream(fis)) {
+        int len = 0;
+        while ((len = bis.read()) != -1) {
+            System.out.print((char)len);
+        }
     } catch (IOException e) {
         e.printStackTrace();
     }
