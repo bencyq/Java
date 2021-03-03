@@ -70,3 +70,149 @@ public static void main(String[] args) {
 }
 ```
 
+### 字节缓冲流效率测试
+
+1. 采用了一个字节读写的方法，直接用文件字节流读写
+2. 采用了字节数组缓冲读取的方法，用文件字节流读写
+3. 采用了一个字节读写的方法，用缓冲字节流读写
+4. 采用了字节数组缓冲读取的方法，用缓冲字节流读写
+
+最终结果为 ![image-20210303145722029](D:\github本地仓库\Java\Java 2 进阶\picture\image-20210303145722029.png)
+
+```java
+public class IOTest {
+    public static void main(String[] args) {
+        copyDirectly();
+        copyWithArray();
+        copyWithBuffer1();
+        copyWithBuffer2();
+    }
+
+    public static void copyDirectly() { // 一次读写一个字节
+        long s = System.currentTimeMillis();
+        try (FileInputStream fis = new FileInputStream("D:\\青年大学习\\青年大学习.xlsx");
+                FileOutputStream fos = new FileOutputStream("copyDirectly.xlsx")) {
+            int len; // 记录了所读取的字节
+            while ((len = fis.read()) != -1) {
+                fos.write(len);
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        long e = System.currentTimeMillis();
+        System.out.println("耗时" + (e - s) + "毫秒");
+        // 耗时 1302 毫秒
+    }
+
+    public static void copyWithArray() {
+        long s = System.currentTimeMillis();
+        try (FileInputStream fis = new FileInputStream("D:\\青年大学习\\青年大学习.xlsx");
+                FileOutputStream fos = new FileOutputStream("copyWithArray.xlsx")) {
+            int len; // 记录了所读取的字节
+            byte[] b = new byte[1024];
+            while ((len = fis.read(b)) != -1) {
+                fos.write(b);
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        long e = System.currentTimeMillis();
+        System.out.println("耗时" + (e - s) + "毫秒");
+    }
+
+    public static void copyWithBuffer1() {
+        long s = System.currentTimeMillis();
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("D:\\青年大学习\\青年大学习.xlsx"));
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("copyWithBuffer1.xlsx"))) {
+            int len = 0;
+            while ((len = bis.read()) != -1) {
+                bos.write(len);
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        long e = System.currentTimeMillis();
+        System.out.println("耗时" + (e - s) + "毫秒");
+    }
+
+    public static void copyWithBuffer2() {
+        long s = System.currentTimeMillis();
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("D:\\青年大学习\\青年大学习.xlsx"));
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("copyWithBuffer1.xlsx"))) {
+            int len = 0;
+            byte[] b = new byte[1024];
+            while ((len = bis.read(b)) != -1) {
+                bos.write(b);
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        long e = System.currentTimeMillis();
+        System.out.println("耗时" + (e - s) + "毫秒");
+    }
+}
+
+```
+
+## 字符缓冲流
+
+### 字符缓冲输出流 BufferedWriter
+
+#### 构造方法
+
+`BufferedWriter(Writer out)`
+
+`BufferedWriter(Writer out, int sz)`：第二个参数决定了缓冲区的大小
+
+#### 特有的成员方法
+
+`public void newLine()`：写入一个行分隔符；会根据不同的操作系统，获取不同的行分隔符
+
+#### 实例
+
+```java
+public static void main(String[] args) {
+    try(BufferedWriter bw = new BufferedWriter(new FileWriter("a.txt"))){
+        for(int i=0;i<10;i++){
+            bw.write("陈彦琦");
+            bw.newLine();
+        }
+        bw.close();
+    } catch(IOException e){
+        System.out.println(e);
+    }
+}
+```
+
+### 字符缓冲输入流 BufferedReader
+
+#### 构造方法
+
+`BufferedReader(Reader in)`
+
+`BufferedReader(Reader in, int sz)`：第二个参数决定了缓冲区的大小
+
+#### 特有成员方法
+
+`public String readLine()`：读一行文本；返回值为该行内容的字符串，但不包含任何终止符（比如`\r \n`），如果已经到达结尾，则返回 null
+
+#### 实例
+
+``` java
+public static void main(String[] args) {
+    try (BufferedReader br = new BufferedReader(new FileReader("a.txt"))) {
+        String str;
+        while ((str = br.readLine()) != null) {
+            System.out.println(str);
+        }
+        br.close();
+    } catch (IOException e) {
+        System.out.println(e);
+    }
+}
+```
+
+## 练习：文本排序
+
+
+
