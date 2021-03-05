@@ -27,9 +27,32 @@
 
 `InputStreamReader`是**字节流通向字符流的桥梁**：它使用指定的 charset（字符集/编码表） 读取字节并将其解码为字符；它使用的字符集可以由名称指定或者显示指定，或者可以接受平台默认的字符集
 
+`java.io.InputStreamReader extends Reader`
+
+### 构造方法
+
+- `public InputStreamReader(InputStream in)`：使用默认字符编码
+- `public InputStreamReader(InputStream in, String charsetName)`：使用指定字符集
+### 实例
+
+```java
+public static void main(String[] args) {
+    try (InputStreamReader isr = new InputStreamReader(new FileInputStream("src\\GBK.txt"), "gbk")) {
+        int len = 0;
+        while ((len = isr.read()) != -1) {
+            System.out.print((char) len);
+        }
+    } catch (IOException e) {
+        System.out.println(e);
+    }
+}
+```
+
+
+
 ## OutputStreamWriter
 
-`OutputStreamWriter`是字符流通向字节流的桥梁
+`OutputStreamWriter`是**字符流通向字节流的桥梁**
 
 `java.io.OutputstreamWriter extends Writer`：可使用指定的 charset 将要写入流中的字符编码为字节
 
