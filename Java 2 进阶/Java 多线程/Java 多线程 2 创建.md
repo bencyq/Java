@@ -8,6 +8,8 @@
 
 ## 2.1继承 Thread 类
 
+不建议使用，避免 Java 类的单继承局限性
+
 ### 2.2使用步骤
 
 1. 自定义线程类继承 Thread 类
@@ -45,9 +47,69 @@ class StartThread extends Thread {
 
 ## 3.1 实现 Runnable 接口
 
-推荐使用这种方法，因为 Java 的单继承的局限性
+推荐使用这种方法，避免了 Java 的单继承的局限性，方便同一个对象被多个线程使用
 
 ### 3.2使用步骤
 
 1. 类实现 Runnable 接口，并实现了 run() 方法
 2. 创建类的实例，在创建 Thread 时作为参数传递，并启动
+
+### 3.3 实例
+
+```java
+public class ThreadTest implements Runnable {
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 200; i++) {
+            System.out.println("我在学 Java");
+        }
+    }
+
+    public static void main(String[] args) {
+        // 创建 Runnable 接口的实现类对象
+        ThreadTest threadTest = new ThreadTest();
+        // 创建线程对象，参数为实现了 Runnable 接口的类的实例，通过线程对象来开启线程
+        Thread thread = new Thread(threadTest);
+        thread.start();
+        // 也可以写成 new Thread(threadTest).start();
+        for (int i = 0; i < 200; i++) {
+            System.out.println("我在学多线程");
+        }
+    }
+}
+```
+
+## 4.1 多个线程同时操作一个对象
+
+### 4.2实例
+
+```java
+// 多个线程同时操作一个对象
+// 买火车票的例子
+public class TestThread implements Runnable {
+
+    private int tickNums = 10;
+
+    @Override
+    public void run() {
+        while (true) {
+            if (tickNums <= 0)
+                break;
+            // Thread.currentThread().getName()：获得当前线程的名字
+            System.out.println(Thread.currentThread().getName() + "拿到了第" + tickNums-- + "票");
+        }
+    }
+    public static void main(String[] args) {
+        TestThread testThread=new TestThread();
+        // 开启三个线程
+        new Thread(testThread,"小明").start();  // 第二个参数设置线程的名字
+        new Thread(testThread,"老师").start(); 
+        new Thread(testThread,"黄牛党").start(); 
+    }   
+}
+```
+
+会出现问题：线程不安全，数据紊乱，如下图所示
+
+![image-20210307184112782](../picture/image-20210307184112782.png)	
