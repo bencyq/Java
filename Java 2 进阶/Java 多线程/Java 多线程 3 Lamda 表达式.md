@@ -127,14 +127,5 @@ public class TestLambda {
 interface Lambda {
     public void test(int a);
 }
-
-class LambdaImpl implements Lambda {
-
-    @Override
-    public void test(int a) {
-        System.out.println("This is Lambda");
-    }
-
-}
 ```
 
