@@ -92,3 +92,49 @@ class Like implements Ilike {
 }
 ```
 
+## **表达式与简化**
+
+```java
+public class TestLambda {
+    public static void main(String[] args) {
+        // 标准 Lambda 表达式
+        Lambda lambda = (int a) -> {
+            System.out.print("This is Lambda");
+            System.out.println(" 表达式");
+        };
+        lambda.test(0);
+
+        // 简化1：参数类型省略
+        lambda = (a) -> {
+            System.out.print("This is Lambda");
+            System.out.println(" 表达式 简化1");
+        };
+        lambda.test(0);
+
+        // 简化2：简化括号(前提是只有一个参数)
+        lambda = a -> {
+            System.out.print("This is Lambda");
+            System.out.println(" 表达式 简化2");
+        };
+        lambda.test(0);
+
+        // 简化3：去掉大括号(前提是重写的方法体只有一行代码)
+        lambda=a->System.out.println("This is Lambda 表达式 简化3");
+        lambda.test(0);
+    }
+}
+
+interface Lambda {
+    public void test(int a);
+}
+
+class LambdaImpl implements Lambda {
+
+    @Override
+    public void test(int a) {
+        System.out.println("This is Lambda");
+    }
+
+}
+```
+
