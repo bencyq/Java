@@ -228,3 +228,38 @@ public class TestJoin implements Runnable {
 
 ## 观测线程状态
 
+```java
+public class ThreadState {
+    public static void main(String[] args) {
+        Thread thread = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("////////");
+        });
+
+        // 观测状态
+        Thread.State state = thread.getState();
+        System.out.println(state);
+
+        // 观察启动后
+        thread.start();
+        System.out.println(state = thread.getState());
+
+        while (state != Thread.State.TERMINATED) { // 只要线程不停止，就一直处于输出状态
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(state = thread.getState()); // 更新线程状态
+        }
+    }
+}
+
+```
+
