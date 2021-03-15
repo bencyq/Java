@@ -68,10 +68,16 @@ public class ThreadStop implements Runnable {
 ## 线程休眠
 
 - `sleep()`指定当前线程休眠的毫秒数
+
 - `sleep()`存在异常`InterruptedException`
+
 - `sleep()`时间达到后进入就绪状态
+
 - `sleep()`可以模拟网络延迟、倒计时等
+
 - 每一个对象都有锁，`sleep()`不会释放锁
+
+- `sleep()` <u>**可以放大问题的发生性**</u>，让两个线程同时去获取资源，可以**判断线程是否安全**
 
 ### 用法一：模拟延迟
 
