@@ -173,6 +173,36 @@ public class ThreadSleep {
 }
 ```
 
+### 用法四：休眠主线程，等待子线程结束
+
+```java
+// 这是线程同步机制的代码
+package src.com.bencyq.Thread;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class TestJUC {
+    public static void main(String[] args) {
+        CopyOnWriteArrayList<String> list =new CopyOnWriteArrayList<String>();
+        for (int i = 0; i < 10000; i++) {
+            new Thread(()->{
+                list.add(Thread.currentThread().getName());
+            }).start();
+        }
+
+        try {
+            Thread.sleep(30000);  // 当 CPU 处理性能差的时候，可以让主线程休眠比较长的一段事件，让子线程先运行完，再运行主线程
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(list.size());
+    }
+}
+```
+
+
+
 ## 线程礼让
 
 - 将当前正在执行的线程停止，但不阻塞

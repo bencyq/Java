@@ -370,3 +370,116 @@ public class SafeList {
 }
 ```
 
+## JUC 安全类型的集合
+
+位于`java.util.concurrent.*`包下，其集合都是安全类型的，不用再调用同步机制
+
+### 实例`CopyOnWriteArrayList`集合
+
+```java
+package src.com.bencyq.Thread;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class TestJUC {
+    public static void main(String[] args) {
+        CopyOnWriteArrayList<String> list =new CopyOnWriteArrayList<String>();
+        for (int i = 0; i < 10000; i++) {
+            new Thread(()->{
+                list.add(Thread.currentThread().getName());
+            }).start();
+        }
+
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(list.size());
+    }
+}
+```
+
+## 死锁
+
+### 基本概念
+
+- 两个或多个线程占有同一资源，互相等待对方释放资源，都停止执行的情形
+- 某一同步块同时拥有**两个以上对象的锁**时，就可能发生死锁问题
+
+### 避免方法
+
+#### 产生死锁的四个必要条件
+
+1. 互斥条件：一个资源每次只能被一个进程使用
+2. 请求与保持条件：一个线程因请求资源而阻塞时，对已获得的资源保持不放
+3. 不剥夺条件：线程已获得的资源，在未使用完之前，不能强行剥夺
+4. 循环等待条件：若干线程之间形成一种头尾衔接的循环等待资源关系
+
+### 实例（==未完成==）
+
+```java
+package src.com.bencyq.Thread;
+
+public class DeadLock {
+    public static void main(String[] args) {
+        Test test1 = new Test(0, "疯子 1");
+        Test test2 = new Test(0, "疯子 2");
+        test1.start();
+        test2.start();
+    }
+}
+
+class Thread1 {
+
+}
+
+class Thread2 {
+
+}
+
+class Test extends Thread {
+    static Thread1 thread1 = new Thread1();
+    static Thread2 thread2 = new Thread2();
+
+    int choice;
+    String threadName; // 使用 CPU 的线程
+
+    Test(int choice, String threadName) {
+        this.choice = choice;
+        this.threadName = threadName;
+    }
+
+    @Override
+    public void run() {
+        try {
+            test();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 互相持有对方的锁
+    private void test() throws InterruptedException {
+        if (choice == 0) {
+            synchronized (thread1) { // 获得 线程1 的锁
+                System.out.println(this.threadName + "获得 线程1 的锁");
+                Thread.sleep(1000);
+                synchronized (thread2) { // 1 秒钟后，获得 线程2 的锁
+                    System.out.println(this.threadName + "获得 线程2 的锁");
+                }
+            }
+        } else {
+            synchronized (thread2) { // 获得 线程2 的锁
+                System.out.println(this.threadName + "拿到 线程1 的锁");
+                Thread.sleep(3000);
+                synchronized (thread1) { // 2 秒钟后，获得 线程1 的锁
+                    System.out.println(this.threadName + "拿到 线程2 的锁");
+                }
+            }
+        }
+    }
+}
+```
+
