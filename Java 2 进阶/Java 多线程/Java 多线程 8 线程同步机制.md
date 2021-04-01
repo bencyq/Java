@@ -1,4 +1,4 @@
-# 线程同步机制
+# 	线程同步机制
 
 ## 概念
 
@@ -483,3 +483,82 @@ class Test extends Thread {
 }
 ```
 
+## LOCK 锁
+
+### 基本概念
+
+从 JDK 5.0 开始，Java 提供了更强大的线程同步机制——通过显示定义**同步锁对象**来实现同步；同步锁使用 LOCK 对象来充当
+
+`java.util.concurrent.locks.Lock`接口是控制多个线程对共享资源进行访问的工具；锁提供了对共享资源的独占访问，每次只有一个线程对 Lock 对象加锁，线程开始访问共享资源之前应获得 Lock 对象
+
+`ReentrantLock`类实现了 Lock，它拥有与`synchronized`相同的并发性和内存语义，在实现线程安全的控制中，比较常用的是`ReetrantLock`，可以显示加锁、释放锁
+
+### 使用方法
+
+```java
+class A{
+    private final ReetrantLock lock = new ReetrantLock();
+    public void run(){
+        lock.lock();
+        try{
+            // 保证线程安全的代码
+        } finally{
+            lock.unlock();
+            // 如果同步代码会有异常，要将 unlock() 写入 finally 语句块
+        }
+    }
+}
+```
+
+### 实例
+
+```java
+package src.com.bencyq.Thread;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+public class TestLock {
+    public static void main(String[] args) {
+        TestLock2 testLock2 = new TestLock2();
+        new Thread(testLock2).start();
+        new Thread(testLock2).start();
+        new Thread(testLock2).start();
+    }
+}
+
+class TestLock2 implements Runnable {
+    int ticketNums = 10;
+
+    // 定义 lock 锁
+    private final ReentrantLock lock = new ReentrantLock();
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                lock.lock(); // 加锁
+                if (ticketNums > 0) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(ticketNums--);
+                } else {
+                    break;
+                }
+            } finally {
+                lock.unlock(); // 解锁
+            }
+
+        }
+    }
+}
+```
+
+### `synchronized 与 Lock 的对比`
+
+- `Lock` 是显示锁（**手动**开启和关闭锁，别忘记关闭锁）；`synchronized`是隐式锁，出了作用域自动释放
+- `Lock`只有代码块锁，`synchronized`有代码块锁和方法锁
+- 使用`Lock`锁，JVM 将花费较少的时间来调度线程，**性能更好**；并且有更好的拓展性（提供更多子类）
+- 优先使用顺序：`Lock` > 同步代码块（已经进入了方法体，分配了相应资源）> 同步方法（在方法体之外）
